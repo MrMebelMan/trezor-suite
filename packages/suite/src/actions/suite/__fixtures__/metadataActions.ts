@@ -455,7 +455,7 @@ const init = [
         initialState: {
             device: { state: undefined },
         },
-        result: [],
+        result: [{ type: '@metadata/enable' }],
     },
     {
         description: 'metadata already enabled',

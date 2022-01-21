@@ -648,13 +648,14 @@ export const init =
     (force = false) =>
     async (dispatch: Dispatch, getState: GetState) => {
         const { device } = getState().suite;
-        if (!device?.state) {
-            return false;
-        }
 
         // 1. set metadata enabled globally
         if (!getState().metadata.enabled) {
             dispatch(enableMetadata());
+        }
+
+        if (!device?.state) {
+            return false;
         }
 
         // 2. set device metadata key (master key). Sometimes, if state is not present
