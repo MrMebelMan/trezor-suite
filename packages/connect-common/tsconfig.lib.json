@@ -5,5 +5,9 @@
         "outDir": "./lib",
         "esModuleInterop": false
     },
-    "include": ["./src"]
+    "references": [
+        { "path": "../utils" },
+        { "path": "../rollout" },
+    ],
+    "include": ["./src/**/*.ts", "./src/**/*.json"],
 }
