@@ -133,13 +133,14 @@ const TruncateWrapper = ({
 
 const getFingerprint = (
     tokens: Account['tokens'],
-    tokenSymbol: string | undefined,
+    symbol: string | undefined,
 ): string | undefined => {
     if (!tokens) {
         return undefined;
     }
 
-    const token = tokens.find(token => token.symbol === tokenSymbol);
+    const token = tokens.find(token => token.symbol?.toLowerCase() === symbol?.toLowerCase());
+
     return token?.name;
 };
 
@@ -157,6 +158,7 @@ const OutputElement = ({
     if (!account) return null;
 
     const { tokens, networkType } = account;
+    console.log('token2', token);
     const cardanoFingerprint = getFingerprint(tokens, token?.symbol);
 
     return (
