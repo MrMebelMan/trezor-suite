@@ -7,7 +7,6 @@ import { Network } from '@wallet-types';
 import { TokenInfo } from 'trezor-connect';
 import Indicator, { Props as IndicatorProps } from './Indicator';
 import OutputElement, { OutputElementLine } from './OutputElement';
-import type { Account } from '@wallet-types';
 
 export type OutputProps =
     | {
@@ -42,11 +41,10 @@ export type OutputProps =
 export type Props = OutputProps & {
     state: IndicatorProps['state'];
     symbol: Network['symbol'];
-    networkType: Account['networkType'];
 };
 
 const Output = (props: Props) => {
-    const { type, state, label, value, symbol, token, networkType } = props;
+    const { type, state, label, value, symbol, token } = props;
     let outputLabel: React.ReactNode = label;
 
     if (type === 'opreturn') {
@@ -135,7 +133,6 @@ const Output = (props: Props) => {
             indicator={<Indicator state={state} size={16} />}
             lines={outputLines}
             token={token}
-            networkType={networkType}
             cryptoSymbol={outputSymbol}
             fiatSymbol={symbol}
             hasExpansion={hasExpansion}

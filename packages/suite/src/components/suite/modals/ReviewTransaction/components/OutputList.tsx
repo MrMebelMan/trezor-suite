@@ -108,7 +108,7 @@ const OutputList = ({
     isRbfAction,
     toggleDetails,
 }: Props) => {
-    const { symbol, networkType } = account;
+    const { symbol } = account;
     const { options, selectedFee } = precomposedForm;
     const broadcastEnabled = options.includes('broadcast');
 
@@ -159,7 +159,6 @@ const OutputList = ({
                                     key={index}
                                     {...output}
                                     state={state}
-                                    networkType={networkType}
                                     symbol={symbol}
                                 />
                             );
@@ -179,7 +178,6 @@ const OutputList = ({
                                         ),
                                     },
                                 ]}
-                                networkType={networkType}
                                 cryptoSymbol={symbol}
                                 fiatSymbol={symbol}
                                 fiatVisible={!isTestnet(symbol)}

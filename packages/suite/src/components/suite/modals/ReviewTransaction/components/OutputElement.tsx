@@ -2,9 +2,10 @@ import React from 'react';
 import styled from 'styled-components';
 import { Truncate } from '@trezor/components';
 import { FiatValue, FormattedCryptoAmount, Translation } from '@suite-components';
-import { Network } from '@wallet-types';
+import { Network, Account } from '@wallet-types';
 import { TokenInfo } from 'trezor-connect';
 import { amountToSatoshi } from '@wallet-utils/accountUtils';
+import { useSelector } from '@suite-hooks';
 
 const OutputWrapper = styled.div`
     display: flex;
@@ -120,7 +121,6 @@ export type Props = {
     hasExpansion?: boolean;
     fiatVisible?: boolean;
     token?: TokenInfo;
-    networkType: Network['networkType'];
 };
 
 const TruncateWrapper = ({
@@ -131,7 +131,19 @@ const TruncateWrapper = ({
     children?: React.ReactNode;
 }) => (condition ? <Truncate>{children}</Truncate> : <>{children}</>);
 
-const OutputLine = ({
+const getFingerprint = (
+    tokens: Account['tokens'],
+    tokenSymbol: string | undefined,
+): string | undefined => {
+    if (!tokens) {
+        return undefined;
+    }
+
+    const token = tokens.find(token => token.symbol === tokenSymbol);
+    return token?.name;
+};
+
+const OutputElement = ({
     indicator,
     lines,
     token,
@@ -139,65 +151,83 @@ const OutputLine = ({
     fiatSymbol,
     hasExpansion = false,
     fiatVisible = false,
-    networkType,
-}: Props) => (
-    <OutputWrapper>
-        <OutputLeft>
-            {lines.length > 1 ? (
-                <MultiIndicatorWrapper linesCount={lines.length - 1}>
-                    {indicator}
-                </MultiIndicatorWrapper>
-            ) : (
-                <>{indicator}</>
-            )}
-        </OutputLeft>
-        <OutputRight>
-            {lines.map(line => (
-                <OutputRightLine key={line.id}>
-                    <OutputHeadline>
-                        <Truncate>{line.label}</Truncate>
-                    </OutputHeadline>
-                    <OutputValue>
-                        <TruncateWrapper condition={hasExpansion}>
-                            <OutputValueWrapper>
-                                {line.plainValue ? (
-                                    line.value
-                                ) : (
-                                    <FormattedCryptoAmount
-                                        disableHiddenPlaceholder
-                                        value={line.value}
-                                        symbol={cryptoSymbol}
-                                    />
-                                )}
-                            </OutputValueWrapper>
-                            {fiatVisible && (
-                                <>
-                                    <DotSeparatorWrapper>
-                                        <DotSeparator />
-                                    </DotSeparatorWrapper>
-                                    <OutputValueWrapper>
-                                        <FiatValue
-                                            disableHiddenPlaceholder
-                                            amount={line.value}
-                                            symbol={fiatSymbol}
-                                        />
-                                    </OutputValueWrapper>
-                                </>
-                            )}
-                        </TruncateWrapper>
-                    </OutputValue>
-                    {networkType === 'cardano' && token && token.decimals !== 0 && (
-                        <CardanoTrezorAmountWrapper>
-                            <OutputHeadline>
-                                <Translation id="TR_CARDANO_TREZOR_AMOUNT_HEADLINE" />
-                            </OutputHeadline>
-                            <OutputValue>{amountToSatoshi(line.value, token.decimals)}</OutputValue>
-                        </CardanoTrezorAmountWrapper>
-                    )}
-                </OutputRightLine>
-            ))}
-        </OutputRight>
-    </OutputWrapper>
-);
+}: Props) => {
+    const { account } = useSelector(state => state.wallet.selectedAccount);
 
-export default OutputLine;
+    if (!account) return null;
+
+    const { tokens, networkType } = account;
+    const cardanoFingerprint = getFingerprint(tokens, token?.symbol);
+
+    return (
+        <OutputWrapper>
+            <OutputLeft>
+                {lines.length > 1 ? (
+                    <MultiIndicatorWrapper linesCount={lines.length - 1}>
+                        {indicator}
+                    </MultiIndicatorWrapper>
+                ) : (
+                    <>{indicator}</>
+                )}
+            </OutputLeft>
+            <OutputRight>
+                {lines.map(line => (
+                    <OutputRightLine key={line.id}>
+                        <OutputHeadline>
+                            <Truncate>{line.label}</Truncate>
+                        </OutputHeadline>
+                        <OutputValue>
+                            <TruncateWrapper condition={hasExpansion}>
+                                <OutputValueWrapper>
+                                    {line.plainValue ? (
+                                        line.value
+                                    ) : (
+                                        <FormattedCryptoAmount
+                                            disableHiddenPlaceholder
+                                            value={line.value}
+                                            symbol={cryptoSymbol}
+                                        />
+                                    )}
+                                </OutputValueWrapper>
+                                {fiatVisible && (
+                                    <>
+                                        <DotSeparatorWrapper>
+                                            <DotSeparator />
+                                        </DotSeparatorWrapper>
+                                        <OutputValueWrapper>
+                                            <FiatValue
+                                                disableHiddenPlaceholder
+                                                amount={line.value}
+                                                symbol={fiatSymbol}
+                                            />
+                                        </OutputValueWrapper>
+                                    </>
+                                )}
+                            </TruncateWrapper>
+                        </OutputValue>
+                        {networkType === 'cardano' && cardanoFingerprint && (
+                            <CardanoTrezorAmountWrapper>
+                                <OutputHeadline>
+                                    <Translation id="TR_CARDANO_FINGERPRINT_HEADLINE" />
+                                </OutputHeadline>
+                                <OutputValue>{cardanoFingerprint}</OutputValue>
+                            </CardanoTrezorAmountWrapper>
+                        )}
+                        {networkType === 'cardano' && token && token.decimals !== 0 && (
+                            <CardanoTrezorAmountWrapper>
+                                <OutputHeadline>
+                                    <Translation id="TR_CARDANO_TREZOR_AMOUNT_HEADLINE" />
+                                </OutputHeadline>
+                                <OutputValue>
+                                    {amountToSatoshi(line.value, token.decimals)}
+                                </OutputValue>
+                            </CardanoTrezorAmountWrapper>
+                        )}
+                    </OutputRightLine>
+                ))}
+            </OutputRight>
+        </OutputWrapper>
+    );
+};
+
+export default OutputElement;
