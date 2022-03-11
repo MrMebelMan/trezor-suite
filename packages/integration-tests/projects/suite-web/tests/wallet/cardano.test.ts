@@ -39,7 +39,8 @@ describe('Cardano', () => {
 
         // go to cardano account #1 - account details
         cy.getTestElement('@wallet/menu/wallet-details').click();
-        cy.getTestElement('@app').matchImageSnapshot('cardano-account-details');
+        // todo
+        // cy.getTestElement('@app').matchImageSnapshot('cardano-account-details');
 
         // show public key modal
         cy.getTestElement('@wallets/details/show-xpub-button').click();
