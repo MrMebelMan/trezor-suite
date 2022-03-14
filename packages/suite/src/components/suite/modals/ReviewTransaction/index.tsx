@@ -12,12 +12,14 @@ import Summary from './components/Summary';
 import { isCardanoTx, getShortFingerprint } from '@wallet-utils/cardanoUtils';
 import { CardanoOutput } from 'trezor-connect';
 
-const ModalInner = styled.div`
-    display: flex;
-    padding: 10px;
-
-    @media (max-width: ${variables.SCREEN_SIZE.SM}) {
-        flex-direction: column;
+const StyledModal = styled(Modal)`
+    ${Modal.Body} {
+        padding: 10px;
+    }
+    ${Modal.Content} {
+        @media (min-width: ${variables.SCREEN_SIZE.SM}) {
+            flex-direction: row;
+        }
     }
 `;
 
@@ -192,9 +194,7 @@ const ReviewTransaction = ({ decision }: Props) => {
     }
 
     return (
-        <Modal
-            noPadding
-            size="large"
+        <StyledModal
             header={
                 <ConfirmOnDevice
                     title={<Translation id="TR_CONFIRM_ON_TREZOR" />}
@@ -210,31 +210,29 @@ const ReviewTransaction = ({ decision }: Props) => {
                 />
             }
         >
-            <ModalInner>
-                <Summary
-                    estimateTime={estimateTime}
-                    tx={precomposedTx}
-                    account={selectedAccount.account}
-                    network={selectedAccount.network}
-                    broadcast={precomposedForm.options.includes('broadcast')}
-                    detailsOpen={detailsOpen}
-                    isRbfAction={isRbfAction}
-                    onDetailsClick={() => setDetailsOpen(!detailsOpen)}
-                />
-                <OutputList
-                    account={selectedAccount.account}
-                    precomposedForm={precomposedForm}
-                    precomposedTx={precomposedTx}
-                    signedTx={signedTx}
-                    decision={decision}
-                    detailsOpen={detailsOpen}
-                    outputs={outputs}
-                    buttonRequests={buttonRequests}
-                    isRbfAction={isRbfAction}
-                    toggleDetails={() => setDetailsOpen(!detailsOpen)}
-                />
-            </ModalInner>
-        </Modal>
+            <Summary
+                estimateTime={estimateTime}
+                tx={precomposedTx}
+                account={selectedAccount.account}
+                network={selectedAccount.network}
+                broadcast={precomposedForm.options.includes('broadcast')}
+                detailsOpen={detailsOpen}
+                isRbfAction={isRbfAction}
+                onDetailsClick={() => setDetailsOpen(!detailsOpen)}
+            />
+            <OutputList
+                account={selectedAccount.account}
+                precomposedForm={precomposedForm}
+                precomposedTx={precomposedTx}
+                signedTx={signedTx}
+                decision={decision}
+                detailsOpen={detailsOpen}
+                outputs={outputs}
+                buttonRequests={buttonRequests}
+                isRbfAction={isRbfAction}
+                toggleDetails={() => setDetailsOpen(!detailsOpen)}
+            />
+        </StyledModal>
     );
 };
 

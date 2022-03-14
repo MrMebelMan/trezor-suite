@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { Button, ButtonProps, H2, P, variables } from '@trezor/components';
+import { Button, H2, P, variables } from '@trezor/components';
 import { SelectWordCount, SelectRecoveryType } from '@recovery-components';
 import { Loading, Translation, CheckItem, TrezorLink, Image, Modal } from '@suite-components';
 import * as recoveryActions from '@recovery-actions/recoveryActions';
@@ -16,20 +16,8 @@ const Wrapper = styled.div`
     height: 100%;
 `;
 
-const Row = styled.div`
-    display: flex;
-    flex-direction: row;
-`;
-
-const Buttons = styled(Row)`
-    justify-content: center;
-    margin-top: auto;
-    flex-direction: column;
-`;
-
 const StyledButton = styled(Button)`
-    min-width: 224px;
-    margin-bottom: 16px;
+    width: 224px;
 `;
 
 const InfoBox = styled.div`
@@ -77,7 +65,6 @@ const StyledP = styled(P)`
 `;
 
 const StatusImage = styled(Image)`
-    margin-top: auto;
     padding-bottom: 24px;
 `;
 
@@ -85,9 +72,29 @@ const StatusTitle = styled(H2)`
     margin: 0px 0px 12px;
 `;
 
-const CloseButton = (props: ButtonProps) => (
-    <StyledButton {...props} data-test="@recovery/close-button" variant="tertiary" icon="CROSS">
-        {props.children ? props.children : <Translation id="TR_CLOSE" />}
+const VerticalCenter = styled.div`
+    margin-top: auto;
+    margin-bottom: auto;
+`;
+
+const StyledModal = styled(Modal)`
+    min-height: 620px;
+`;
+
+const TinyModal = styled(Modal)`
+    width: 360px;
+`;
+
+type CloseButtonProps = { onClick: () => void; variant: 'TR_CLOSE' | 'TR_CANCEL' };
+
+const CloseButton = ({ onClick, variant }: CloseButtonProps) => (
+    <StyledButton
+        onClick={onClick}
+        data-test="@recovery/close-button"
+        variant="secondary"
+        icon="CROSS"
+    >
+        <Translation id={variant} />
     </StyledButton>
 );
 
@@ -122,27 +129,48 @@ const Recovery = ({ modal, closeModalApp }: InjectedModalApplicationProps) => {
 
     if (!device || !device.features) {
         return (
-            <Modal
-                size="tiny"
+            <TinyModal
                 heading={<Translation id="TR_RECONNECT_HEADER" />}
                 cancelable
                 onCancel={closeModalApp}
                 data-test="@recovery/no-device"
+                bottomBar={<CloseButton onClick={() => closeModalApp()} variant="TR_CLOSE" />}
             >
                 <Image image="CONNECT_DEVICE" />
-                <Buttons>
-                    <CloseButton onClick={() => closeModalApp()} />
-                </Buttons>
-            </Modal>
+            </TinyModal>
         );
     }
 
     return (
-        <Modal
-            useFixedHeight
+        <StyledModal
             heading={<Translation id="TR_CHECK_RECOVERY_SEED" />}
             totalProgressBarSteps={statesInProgressBar.length}
             currentProgressBarStep={statesInProgressBar.findIndex(s => s === recovery.status) + 1}
+            bottomBar={
+                <>
+                    {['initial', 'select-word-count', 'select-recovery-type', 'finished'].includes(
+                        recovery.status,
+                    ) && (
+                        <CloseButton
+                            onClick={() => closeModalApp()}
+                            variant={recovery.status === 'finished' ? 'TR_CLOSE' : 'TR_CANCEL'}
+                        />
+                    )}
+                    {recovery.status === 'initial' && (
+                        <StyledButton
+                            onClick={() =>
+                                model === 1
+                                    ? actions.setStatus('select-word-count')
+                                    : actions.checkSeed()
+                            }
+                            isDisabled={!understood || isLocked()}
+                            data-test="@recovery/start-button"
+                        >
+                            <Translation id="TR_START" />
+                        </StyledButton>
+                    )}
+                </>
+            }
         >
             <Wrapper>
                 {recovery.status === 'initial' && model === 1 && (
@@ -208,41 +236,18 @@ const Recovery = ({ modal, closeModalApp }: InjectedModalApplicationProps) => {
                 )}
 
                 {recovery.status === 'initial' && (
-                    <>
-                        <CheckItem
-                            data-test="@recovery/user-understands-checkbox"
-                            title={<Translation id="TR_DRY_RUN_CHECK_ITEM_TITLE" />}
-                            description={<Translation id="TR_DRY_RUN_CHECK_ITEM_DESCRIPTION" />}
-                            isChecked={understood}
-                            link={
-                                <TrezorLink
-                                    icon="EXTERNAL_LINK"
-                                    size="tiny"
-                                    href={URLS.DRY_RUN_URL}
-                                >
-                                    <Translation id="TR_LEARN_MORE" />
-                                </TrezorLink>
-                            }
-                            onClick={() => setUnderstood(!understood)}
-                        />
-
-                        <Buttons>
-                            <StyledButton
-                                onClick={() =>
-                                    model === 1
-                                        ? actions.setStatus('select-word-count')
-                                        : actions.checkSeed()
-                                }
-                                isDisabled={!understood || isLocked()}
-                                data-test="@recovery/start-button"
-                            >
-                                <Translation id="TR_START" />
-                            </StyledButton>
-                            <CloseButton onClick={() => closeModalApp()}>
-                                <Translation id="TR_CANCEL" />
-                            </CloseButton>
-                        </Buttons>
-                    </>
+                    <CheckItem
+                        data-test="@recovery/user-understands-checkbox"
+                        title={<Translation id="TR_DRY_RUN_CHECK_ITEM_TITLE" />}
+                        description={<Translation id="TR_DRY_RUN_CHECK_ITEM_DESCRIPTION" />}
+                        isChecked={understood}
+                        link={
+                            <TrezorLink icon="EXTERNAL_LINK" size="tiny" href={URLS.DRY_RUN_URL}>
+                                <Translation id="TR_LEARN_MORE" />
+                            </TrezorLink>
+                        }
+                        onClick={() => setUnderstood(!understood)}
+                    />
                 )}
 
                 {recovery.status === 'select-word-count' && (
@@ -251,11 +256,6 @@ const Recovery = ({ modal, closeModalApp }: InjectedModalApplicationProps) => {
                             <Translation id="TR_SELECT_NUMBER_OF_WORDS" />
                         </StatusTitle>
                         <SelectWordCount onSelect={(count: WordCount) => onSetWordsCount(count)} />
-                        <Buttons>
-                            <CloseButton onClick={() => closeModalApp()}>
-                                <Translation id="TR_CANCEL" />
-                            </CloseButton>
-                        </Buttons>
                     </>
                 )}
                 {recovery.status === 'select-recovery-type' && (
@@ -264,11 +264,6 @@ const Recovery = ({ modal, closeModalApp }: InjectedModalApplicationProps) => {
                             <Translation id="TR_CHOSE_RECOVERY_TYPE" />
                         </StatusTitle>
                         <SelectRecoveryType onSelect={onSetRecoveryType} />
-                        <Buttons>
-                            <CloseButton onClick={() => closeModalApp()}>
-                                <Translation id="TR_CANCEL" />
-                            </CloseButton>
-                        </Buttons>
                     </>
                 )}
 
@@ -289,7 +284,7 @@ const Recovery = ({ modal, closeModalApp }: InjectedModalApplicationProps) => {
                     </>
                 )}
                 {recovery.status === 'finished' && !recovery.error && (
-                    <>
+                    <VerticalCenter>
                         <StatusImage image="UNI_SUCCESS" />
                         <H2 data-test="@recovery/success-title">
                             <Translation id="TR_SEED_CHECK_SUCCESS_TITLE" />
@@ -297,15 +292,11 @@ const Recovery = ({ modal, closeModalApp }: InjectedModalApplicationProps) => {
                         <StyledP>
                             <Translation id="TR_SEED_CHECK_SUCCESS_DESC" />
                         </StyledP>
-
-                        <Buttons>
-                            <CloseButton onClick={() => closeModalApp()} />
-                        </Buttons>
-                    </>
+                    </VerticalCenter>
                 )}
 
                 {recovery.status === 'finished' && recovery.error && (
-                    <>
+                    <VerticalCenter>
                         <StatusImage image="UNI_ERROR" />
                         <H2>
                             <Translation id="TR_SEED_CHECK_FAIL_TITLE" />
@@ -316,14 +307,10 @@ const Recovery = ({ modal, closeModalApp }: InjectedModalApplicationProps) => {
                                 values={{ error: recovery.error }}
                             />
                         </StyledP>
-
-                        <Buttons>
-                            <CloseButton onClick={() => closeModalApp()} />
-                        </Buttons>
-                    </>
+                    </VerticalCenter>
                 )}
             </Wrapper>
-        </Modal>
+        </StyledModal>
     );
 };
 

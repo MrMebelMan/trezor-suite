@@ -1,9 +1,10 @@
 import React from 'react';
 import styled, { css } from 'styled-components';
 import { Button } from '@trezor/components';
-import { Image as Img, Translation, Modal } from '@suite-components';
+import { Image as Img, Translation } from '@suite-components';
 import { useSelector, useActions } from '@suite-hooks';
 import * as routerActions from '@suite-actions/routerActions';
+import { Modal } from '../Modal';
 
 const Image = styled(Img)`
     flex: 1;
@@ -17,9 +18,8 @@ const Image = styled(Img)`
         `}
 `;
 
-const Buttons = styled.div`
-    display: flex;
-    justify-content: space-around;
+const StyledModal = styled(Modal)`
+    width: 600px;
 `;
 
 /**
@@ -51,21 +51,27 @@ const DeviceInvalidModeLayout = (props: Props) => {
     });
 
     return (
-        <Modal size="small" heading={title} description={text} data-test={props['data-test']}>
+        <StyledModal
+            heading={title}
+            description={text}
+            data-test={props['data-test']}
+            bottomBar={
+                <>
+                    {resolveButton && resolveButton}
+                    {allowSwitchDevice && devices.length > 1 && (
+                        <Button
+                            onClick={() =>
+                                goto('suite-switch-device', { params: { cancelable: true } })
+                            }
+                        >
+                            <Translation id="TR_SWITCH_DEVICE" />
+                        </Button>
+                    )}
+                </>
+            }
+        >
             <Image image={image} />
-            <Buttons>
-                {resolveButton && resolveButton}
-                {allowSwitchDevice && devices.length > 1 && (
-                    <Button
-                        onClick={() =>
-                            goto('suite-switch-device', { params: { cancelable: true } })
-                        }
-                    >
-                        <Translation id="TR_SWITCH_DEVICE" />
-                    </Button>
-                )}
-            </Buttons>
-        </Modal>
+        </StyledModal>
     );
 };
 

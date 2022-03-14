@@ -10,12 +10,6 @@ import AdvancedCoinSettings from './AdvancedCoinSettings';
 import type { Network } from '@wallet-types';
 import type { UserContextPayload } from '@suite-actions/modalActions';
 
-const ButtonWrapper = styled.div`
-    display: flex;
-    justify-content: center;
-    margin-top: 24px;
-`;
-
 const BackendRowWrapper = styled.div`
     display: flex;
     width: 100%;
@@ -118,6 +112,20 @@ export const DisableTor = ({ onCancel, decision }: DisableTorProps) => {
                         <Translation id="TR_TOR_DISABLE_ONIONS_ONLY_RESOLVED" />
                     )
                 }
+                bottomBar={
+                    <Button
+                        variant={onionBackends.length ? 'secondary' : 'primary'}
+                        onClick={onDisableTor}
+                    >
+                        <Translation
+                            id={
+                                onionBackends.length
+                                    ? 'TR_TOR_REMOVE_ONION_AND_DISABLE'
+                                    : 'TR_TOR_DISABLE'
+                            }
+                        />
+                    </Button>
+                }
             >
                 {onionBackends.length ? (
                     <>
@@ -146,20 +154,6 @@ export const DisableTor = ({ onCancel, decision }: DisableTorProps) => {
                         </Description>
                     </>
                 )}
-                <ButtonWrapper>
-                    <Button
-                        variant={onionBackends.length ? 'secondary' : 'primary'}
-                        onClick={onDisableTor}
-                    >
-                        <Translation
-                            id={
-                                onionBackends.length
-                                    ? 'TR_TOR_REMOVE_ONION_AND_DISABLE'
-                                    : 'TR_TOR_DISABLE'
-                            }
-                        />
-                    </Button>
-                </ButtonWrapper>
             </Modal>
             {coin && <AdvancedCoinSettings coin={coin} onCancel={() => setCoin(undefined)} />}
         </>

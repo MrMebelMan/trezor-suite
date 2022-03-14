@@ -21,16 +21,6 @@ const LogWrapper = styled.pre`
     word-break: break-all;
 `;
 
-const ButtonWrapper = styled.div`
-    display: flex;
-    width: 100%;
-    justify-content: center;
-
-    @media (max-width: ${variables.SCREEN_SIZE.SM}) {
-        flex-direction: column;
-    }
-`;
-
 const StyledButton = styled(Button)`
     margin: 0 5px;
 
@@ -84,7 +74,7 @@ const Log = ({ onCancel }: Props) => {
             description={<Translation id="LOG_DESCRIPTION" />}
             data-test="@log"
             bottomBar={
-                <ButtonWrapper>
+                <>
                     <StyledButton
                         variant="secondary"
                         onClick={() => copy()}
@@ -99,7 +89,7 @@ const Log = ({ onCancel }: Props) => {
                     >
                         <Translation id="TR_EXPORT_TO_FILE" />
                     </StyledButton>
-                </ButtonWrapper>
+                </>
             }
         >
             <LogWrapper ref={htmlElement} data-test="@log/content">

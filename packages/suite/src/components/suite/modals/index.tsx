@@ -41,6 +41,7 @@ import AddToken from './AddToken';
 import SafetyChecks from './SafetyChecks';
 import { DisableTor } from './DisableTor';
 import { useGuide } from '@guide-hooks';
+import { RawRenderer } from '../Modal/RawRenderer';
 
 import type { AcquiredDevice } from '@suite-types';
 
@@ -273,12 +274,10 @@ export const Modals = () => {
 export const RawModals = () => {
     const props = useSharedProps();
     const modalComponent = getModal(props);
+    console.log(modalComponent);
     return modalComponent
         ? React.cloneElement(modalComponent, {
-              noBackground: true,
-              showHeaderBorder: false,
-              noPadding: true,
-              cancelable: false,
+              render: RawRenderer,
           })
         : null;
 };

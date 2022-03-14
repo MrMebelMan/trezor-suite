@@ -13,7 +13,7 @@ const DescriptionWrapper = styled.div`
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin: 0 16px;
+    margin: 16px 16px 0;
 `;
 
 const Description = styled.div`
@@ -65,13 +65,8 @@ const IconWrapper = styled.div`
     margin-bottom: 40px;
 `;
 
-const Actions = styled.div`
-    display: flex;
-    margin: 12px 0;
-    justify-content: center;
-    & > * {
-        min-width: 200px;
-    }
+const ActionButton = styled(Button)`
+    min-width: 200px;
 `;
 
 const StyledQrReader = styled(QrReader)`
@@ -94,6 +89,12 @@ const StyledTextarea = styled(Textarea)`
     }
 `;
 
+const StyledModal = styled(Modal)`
+    ${Modal.Body} {
+        padding: 0;
+    }
+`;
+
 type Props = Omit<Extract<UserContextPayload, { type: 'qr-reader' }>, 'type'> & {
     onCancel: () => void;
 };
@@ -103,7 +104,8 @@ export interface State {
     error: JSX.Element | null;
 }
 
-const QrScanner = ({ onCancel, decision, allowPaste }: Props) => {
+const QrScanner = ({ onCancel, decision }: Props) => {
+    const allowPaste = true;
     const [readerLoaded, setReaderLoaded] = useState<State['readerLoaded']>(false);
     const [error, setError] = useState<State['error']>(null);
     const [isPasteMode, setPasteMode] = useState(false);
@@ -143,8 +145,7 @@ const QrScanner = ({ onCancel, decision, allowPaste }: Props) => {
     };
 
     return (
-        <Modal
-            noPadding
+        <StyledModal
             cancelable
             onCancel={onCancel}
             heading={<Translation id={isPasteMode ? 'TR_PASTE_URI' : 'TR_SCAN_QR_CODE'} />}
@@ -170,6 +171,13 @@ const QrScanner = ({ onCancel, decision, allowPaste }: Props) => {
                     )}
                 </DescriptionWrapper>
             }
+            bottomBar={
+                isPasteMode ? (
+                    <ActionButton isDisabled={!text} onClick={() => handleScan(text)}>
+                        <Translation id="TR_CONFIRM" />
+                    </ActionButton>
+                ) : null
+            }
         >
             {isPasteMode && (
                 <ContentWrapper show>
@@ -180,11 +188,6 @@ const QrScanner = ({ onCancel, decision, allowPaste }: Props) => {
                             setText(e.target.value);
                         }}
                     />
-                    <Actions>
-                        <Button isDisabled={!text} onClick={() => handleScan(text)}>
-                            <Translation id="TR_CONFIRM" />
-                        </Button>
-                    </Actions>
                 </ContentWrapper>
             )}
 
@@ -224,7 +227,7 @@ const QrScanner = ({ onCancel, decision, allowPaste }: Props) => {
                     </Suspense>
                 </ContentWrapper>
             )}
-        </Modal>
+        </StyledModal>
     );
 };
 
