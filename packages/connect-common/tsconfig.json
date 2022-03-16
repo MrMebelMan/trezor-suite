@@ -5,7 +5,7 @@
         "skipLibCheck": true
     },
     "references": [
-        { "path": "../utils" },
+        { "path": "../utils" }
         // { "path": "../rollout" }
     ],
     "include": [
@@ -13,8 +13,5 @@
         "./src/**/*.json",
         "./tests/**/*.ts"
     ],
-    "exclude": [
-        "node_modules/**",
-    ]
+    "exclude": ["node_modules/**"]
 }
-

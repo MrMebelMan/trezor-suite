@@ -1,4 +1,3 @@
-
 /*
  * Initial settings for connect.
  * It could be changed by passing values into TrezorConnect.init(...) method
@@ -12,49 +11,49 @@ const DEFAULT_DOMAIN = `https://connect.trezor.io/${DIRECTORY}`;
 export const DEFAULT_PRIORITY = 2;
 
 export type Manifest = {
-    appUrl: string,
-    email: string,
+    appUrl: string;
+    email: string;
 };
 
 export type Proxy =
     | string
     | {
           // Partial (useful) BlockchainLinkOptions.proxy
-          protocol?: 'socks4' | 'socks4a' | 'socks' | 'socks5' | 'socks5h',
-          host: string,
-          port: string | number,
-          username?: string,
-          password?: string,
+          protocol?: 'socks4' | 'socks4a' | 'socks' | 'socks5' | 'socks5h';
+          host: string;
+          port: string | number;
+          username?: string;
+          password?: string;
       };
 
 export type ConnectSettings = {
-    manifest?: Manifest,
-    connectSrc?: string,
-    debug?: boolean,
-    hostLabel?: string,
-    hostIcon?: string,
-    popup?: boolean,
-    transportReconnect?: boolean,
-    webusb?: boolean,
-    pendingTransportEvent?: boolean,
-    lazyLoad?: boolean,
-    interactionTimeout?: number,
+    manifest?: Manifest;
+    connectSrc?: string;
+    debug?: boolean;
+    hostLabel?: string;
+    hostIcon?: string;
+    popup?: boolean;
+    transportReconnect?: boolean;
+    webusb?: boolean;
+    pendingTransportEvent?: boolean;
+    lazyLoad?: boolean;
+    interactionTimeout?: number;
     // internal part, not to be accepted from .init()
-    origin?: string,
+    origin?: string;
     // configSrc: string,
-    configSrc?: string,
-    iframeSrc: string,
-    popupSrc: string,
-    webusbSrc: string,
-    version: string,
-    priority: number,
-    trustedHost: boolean,
-    supportedBrowser?: boolean,
-    extension?: string,
-    env: 'node' | 'web' | 'webextension' | 'electron' | 'react-native',
-    timestamp: number,
-    proxy?: Proxy,
-    useOnionLinks?: boolean,
+    configSrc?: string;
+    iframeSrc: string;
+    popupSrc: string;
+    webusbSrc: string;
+    version: string;
+    priority: number;
+    trustedHost: boolean;
+    supportedBrowser?: boolean;
+    extension?: string;
+    env: 'node' | 'web' | 'webextension' | 'electron' | 'react-native';
+    timestamp: number;
+    proxy?: Proxy;
+    useOnionLinks?: boolean;
 };
 
 // todo: settings type

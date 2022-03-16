@@ -11,6 +11,6 @@ export * from './data/TransportInfo';
 export * from './data/UdevInfo';
 
 // todo: as constants?
-export * from './constants';
+// export * from './constants';
 
-export * from './types/coininfo';
+export * from './types';

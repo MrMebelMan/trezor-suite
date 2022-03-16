@@ -1,3 +1,4 @@
+// todo: there is another coininfo in networks
 export interface CoinSupport {
     connect: boolean;
     trezor1: string;
@@ -11,7 +12,6 @@ export interface BlockchainLink {
 
 export type BitcoinDefaultFeesKeys = 'High' | 'Normal' | 'Economy' | 'Low';
 export type BitcoinDefaultFees = { [key in BitcoinDefaultFeesKeys]: number };
-
 
 type Common = {
     label: string; // Human readable format, label != name
@@ -90,3 +90,7 @@ export interface MiscNetworkInfo extends Common {
 }
 
 export type CoinInfo = BitcoinNetworkInfo | EthereumNetworkInfo | MiscNetworkInfo;
+
+export type GetCoinInfo = {
+    coin: string;
+};

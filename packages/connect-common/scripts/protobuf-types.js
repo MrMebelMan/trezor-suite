@@ -250,9 +250,7 @@ export type TypedCall = <T: MessageKey, R: MessageKey>(
 }
 
 // save to file
-const filePath = isTypescript
-    ? 'src/ts/types/trezor/protobuf.d.ts'
-    : 'src/js/types/trezor/protobuf.js';
+const filePath = isTypescript ? 'src/types/trezor/protobuf.ts' : 'src/types/trezor/protobuf.js';
 fs.writeFile(filePath, lines.join('\n'), err => {
     if (err) return console.log(err);
 });

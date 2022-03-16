@@ -4,7 +4,7 @@ import type {
     BitcoinNetworkInfo,
     EthereumNetworkInfo,
     MiscNetworkInfo,
-} from '../types/coininfo';
+} from '../types/networks/coinInfo';
 
 // todo: use @trezor/utils
 import { toHardened, fromHardened } from '../utils/pathUtils';

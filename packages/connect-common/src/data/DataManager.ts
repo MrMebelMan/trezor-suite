@@ -6,7 +6,7 @@
 // import parseUri from 'parse-uri';
 import { parseUri } from '@trezor/utils';
 import { DEFAULT_PRIORITY } from './ConnectSettings';
-import type  { ConnectSettings } from './ConnectSettings';
+import type { ConnectSettings } from './ConnectSettings';
 
 import { parseCoinsJson } from './CoinInfo';
 import { parseFirmware } from './FirmwareInfo';
@@ -18,7 +18,6 @@ import * as releasesBridgeJSON from '../files/bridge/releases.json';
 import * as releases1JSON from '../files/firmware/1/releases.json';
 import * as releases2JSON from '../files/firmware/2/releases.json';
 import * as config from '../files/config.json';
-
 
 type WhiteList = {
     priority: number;
