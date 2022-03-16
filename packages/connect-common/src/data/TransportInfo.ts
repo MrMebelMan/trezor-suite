@@ -1,4 +1,3 @@
-// import type { BridgeInfo } from 'trezor-connect';
 export interface BridgeInfo {
     version: number[];
     directory: string;

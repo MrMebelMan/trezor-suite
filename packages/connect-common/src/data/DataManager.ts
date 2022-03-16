@@ -69,10 +69,6 @@ export type Config = {
 
 type AssetCollection = { [key: string]: JSON };
 
-// const parseConfig = (json: any): Config => {
-//     const config: Config = json;
-//     return config;
-// };
 export class DataManager {
     static config: Config;
 

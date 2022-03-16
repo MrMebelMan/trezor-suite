@@ -3,11 +3,12 @@
     "compilerOptions": {
         "target": "es5",
         "outDir": "./lib",
-        "esModuleInterop": false
+        "esModuleInterop": false,
+        "skipLibCheck": true,
     },
     "references": [
         { "path": "../utils" },
-        { "path": "../rollout" },
+        // { "path": "../rollout" },
     ],
     "include": ["./src/**/*.ts", "./src/**/*.json"],
 }

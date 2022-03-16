@@ -1,13 +1,13 @@
-import { FirmwareInfo } from '../src';
+import { getReleases, parseFirmware, getFirmwareStatus } from '../src';
 import * as releases2 from '../src/files/firmware/2/releases.json';
 
 describe('FirmwareInfo', () => {
     beforeEach(() => {
-        FirmwareInfo.parseFirmware(releases2, 2);
+        parseFirmware(releases2, 2);
     });
 
     test('getReleases', () => {
-        expect(FirmwareInfo.getReleases(2)[0]).toMatchObject({
+        expect(getReleases(2)[0]).toMatchObject({
             ...releases2[0],
             url: expect.any(String),
             url_bitcoinonly: expect.any(String),
@@ -17,15 +17,14 @@ describe('FirmwareInfo', () => {
     test('getFirmwareStatus', () => {
         expect(
             // @ts-ignore
-            FirmwareInfo.getFirmwareStatus({
+            getFirmwareStatus({
                 firmware_present: false,
             }),
         ).toEqual('none');
 
-        // @ts-ignore
         expect(
             // @ts-ignore
-            FirmwareInfo.getFirmwareStatus({
+            getFirmwareStatus({
                 major_version: 1,
                 bootloader_mode: true,
             }),

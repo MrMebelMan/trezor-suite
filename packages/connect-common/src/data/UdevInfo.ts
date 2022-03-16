@@ -1,8 +1,6 @@
 // This file is using format of ./data/bridge/releases.json
 // udev rules are changed occasionally and since there is no releases.json for udev rules its ok to make it hardcoded here
 
-// import type { UdevInfo } from 'trezor-connect';
-
 export interface UdevInfo {
     directory: string;
     packages: Array<{

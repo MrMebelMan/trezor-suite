@@ -21,6 +21,9 @@
         "lib/",
         "CHANGELOG.md"
     ],
+    "browser": {
+        "./lib/utils/fetch": "./lib/utils/fetch-browser"
+    },
     "types": "lib/index.d.ts",
     "typings": "lib/index.d.ts",
     "scripts": {

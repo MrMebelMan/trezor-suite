@@ -1,13 +1,20 @@
 {
     "extends": "../../tsconfig.json",
-    "compilerOptions": { "outDir": "./libDev" },
+    "compilerOptions": {
+        "outDir": "./libDev",
+        "skipLibCheck": true
+    },
     "references": [
         { "path": "../utils" },
-        { "path": "../rollout" },
+        // { "path": "../rollout" }
     ],
     "include": [
         "./src/**/*.ts",
         "./src/**/*.json",
         "./tests/**/*.ts"
+    ],
+    "exclude": [
+        "node_modules/**",
     ]
 }
+

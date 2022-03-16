@@ -1,5 +1,4 @@
-// import { parseCoinsJson, getCoinInfo, getUniqueNetworks } from '../src';
-import { CoinInfo } from '../src';
+import { parseCoinsJson, getCoinInfo, getUniqueNetworks } from '../src';
 
 // todo: maybe remove this in favor of real coins.json ?
 const coinsJSON = {
@@ -140,19 +139,19 @@ const coinsJSON = {
 
 describe('data/CoinInfo', () => {
     beforeAll(() => {
-        CoinInfo.parseCoinsJson(coinsJSON);
+        parseCoinsJson(coinsJSON);
     });
 
     it('getUniqueNetworks', () => {
         const inputs = [
-            CoinInfo.getCoinInfo('btc'),
-            CoinInfo.getCoinInfo('ltc'),
-            CoinInfo.getCoinInfo('btc'),
-            CoinInfo.getCoinInfo('ltc'),
-            CoinInfo.getCoinInfo('ltc'),
+            getCoinInfo('btc'),
+            getCoinInfo('ltc'),
+            getCoinInfo('btc'),
+            getCoinInfo('ltc'),
+            getCoinInfo('ltc'),
         ];
-        const result = [CoinInfo.getCoinInfo('btc'), CoinInfo.getCoinInfo('ltc')];
+        const result = [getCoinInfo('btc'), getCoinInfo('ltc')];
         // @ts-ignore
-        expect(CoinInfo.getUniqueNetworks(inputs)).toEqual(result);
+        expect(getUniqueNetworks(inputs)).toEqual(result);
     });
 });
