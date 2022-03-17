@@ -25,7 +25,9 @@
         "build:lib": "rimraf -rf lib && tsc --build ./tsconfig.lib.json",
         "publish:lib": "./scripts/publish-lib.sh",
         "test:unit": "jest",
-        "example:bridge": "jest --verbose -c jest.config.e2e.js --testPathPattern bridge.integration"
+        "example:bridge": "jest --verbose -c jest.config.e2e.js --testPathPattern bridge.integration",
+        "update:submodules": "./scripts/update-submodules.sh",
+        "update:protobuf": "./scripts/protobuf-build.sh ../trezor-common/protob ../src typescript"
     },
     "devDependencies": {
         "@types/bytebuffer": "^5.0.42",

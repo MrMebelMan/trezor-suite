@@ -13,7 +13,15 @@ _You probably don't want to use this package directly._ For communication with T
 -   exposing single API for various transport methods:
     -   Trezor Bridge
     -   Webusb
+-   Create and expose typescript definitions based on protobuf definitions.
 
+## Updating messages
+
+In order to be used new features of trezor-firmware you need to update protobuf definitions.  
+
+1. `yarn workspace @trezor/transport update:submodules` to update trezor-common submodule
+1. 
+ 
 ### Publishing
 
 [Follow instructions](../../docs/releases/npm-packages.md) how to publish @trezor package to npm registry.
