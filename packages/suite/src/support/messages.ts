@@ -4526,7 +4526,7 @@ export default defineMessages({
         defaultMessage: 'Accounts are still loading. Please wait before adding a new one.',
     },
     RECIPIENT_ADDRESS: {
-        defaultMessage: 'Address',
+        defaultMessage: 'Payment request',
         id: 'RECIPIENT_ADDRESS',
     },
     RECIPIENT_SCAN: {

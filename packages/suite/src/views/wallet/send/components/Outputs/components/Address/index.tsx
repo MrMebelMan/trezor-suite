@@ -1,8 +1,14 @@
-import React from 'react';
+import React, { SetStateAction } from 'react';
 import styled from 'styled-components';
 import { isValidChecksumAddress, toChecksumAddress } from 'ethereumjs-util';
 import { Input, useTheme, variables, Icon, Button } from '@trezor/components';
 import { AddressLabeling, Translation, ReadMoreLink, MetadataLabeling } from '@suite-components';
+import { decodePaymentRequest, getInvoiceDetails } from '@trezor/lightning';
+import { getUnusedAddressFromAccount } from '@wallet-utils/coinmarket/coinmarketUtils';
+
+// import { bech32 } from 'bech32';
+// import BigNumber from 'bignumber.js';
+
 import { InputError } from '@wallet-components';
 import { scanQrRequest } from '@wallet-actions/sendFormActions';
 import { useActions, useDevice } from '@suite-hooks';
@@ -20,6 +26,7 @@ import { PROTOCOL_SCHEME } from '@suite-constants/protocol';
 import ConvertAddress from './components/Convert';
 import type { Account } from '@wallet-types';
 import type { Output } from '@wallet-types/sendForm';
+import { Dispatch } from 'redux';
 
 const Label = styled.div`
     display: flex;
@@ -45,10 +52,11 @@ const StyledIcon = styled(Icon)`
     display: flex;
 `;
 
-interface Props {
+interface AddressProps {
     outputId: number;
     outputsCount: number;
     output: Partial<Output>;
+    setBolt11PayRequest: Dispatch<SetStateAction<any>>;
 }
 
 const parseQrData = (uri: string, symbol: Account['symbol']) => {
@@ -59,7 +67,7 @@ const parseQrData = (uri: string, symbol: Account['symbol']) => {
     return {};
 };
 
-const Address = ({ output, outputId, outputsCount }: Props) => {
+const Address = ({ output, outputId, outputsCount, setBolt11PayRequest }: AddressProps) => {
     const theme = useTheme();
     const { device } = useDevice();
     const {
@@ -179,11 +187,19 @@ const Address = ({ output, outputId, outputsCount }: Props) => {
             name={inputName}
             data-test={inputName}
             defaultValue={addressValue}
-            maxLength={MAX_LENGTH.ADDRESS}
+            maxLength={MAX_LENGTH.ADDRESS_OR_PAYMENT_REQUEST}
             innerRef={register({
                 required: 'RECIPIENT_IS_NOT_SET',
-                validate: value => {
-                    if (!isAddressValid(value, symbol)) {
+                validate: async value => {
+                    let bolt11Decode;
+                    try {
+                        bolt11Decode = decodePaymentRequest(value);
+                    } catch (e) {
+                        // Ignore it.
+                    }
+                    if (networkType === 'bitcoin' && bolt11Decode) {
+                        setBolt11PayRequest(bolt11Decode);
+                    } else if (!isAddressValid(value, symbol)) {
                         const addressDeprecatedUrl = isAddressDeprecated(value, symbol);
                         if (addressDeprecatedUrl) {
                             return (

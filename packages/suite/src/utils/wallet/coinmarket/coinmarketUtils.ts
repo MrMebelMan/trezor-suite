@@ -63,6 +63,8 @@ export function formatCryptoAmount(amount: number, decimals = 8): string {
 }
 
 export const getUnusedAddressFromAccount = (account: Account) => {
+    console.log('getUnusedAddressFromAccount');
+    console.log('account.networkType', account.networkType);
     switch (account.networkType) {
         case 'cardano':
         case 'bitcoin': {

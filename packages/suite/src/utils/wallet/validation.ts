@@ -22,6 +22,9 @@ const getCoinFromTestnet = (symbol: Account['symbol']) => {
 };
 
 export const isAddressValid = (address: string, symbol: Account['symbol']) => {
+    console.log('isAddressValid');
+    console.log('address', address);
+    console.log('symbol', symbol);
     const networkType = isTestnet(symbol) ? 'testnet' : 'prod';
     const updatedSymbol = getCoinFromTestnet(symbol);
     return addressValidator.validate(address, updatedSymbol.toUpperCase(), networkType);

@@ -19,6 +19,7 @@ import { Dispatch, GetState } from '@suite-types';
 
 export const composeTransaction =
     (formValues: FormState, formState: UseSendFormState) => async (dispatch: Dispatch) => {
+        // TODO: probably the swap tx should be sign here
         const { account, feeInfo } = formState;
         if (!account.addresses || !account.utxo) return;
 
@@ -170,6 +171,8 @@ export const composeTransaction =
 export const signTransaction =
     (formValues: FormState, transactionInfo: PrecomposedTransactionFinal) =>
     async (dispatch: Dispatch, getState: GetState) => {
+        console.log('signTransaction');
+        console.log('transactionInfo', transactionInfo);
         const { selectedAccount } = getState().wallet;
         const { device } = getState().suite;
         if (

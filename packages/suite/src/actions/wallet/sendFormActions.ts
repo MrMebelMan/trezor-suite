@@ -359,6 +359,7 @@ export const sendRaw = (payload?: boolean): SendFormAction => ({
 
 export const pushRawTransaction =
     (tx: string, coin: Account['symbol']) => async (dispatch: Dispatch, getState: GetState) => {
+        console.log('tx', tx);
         const sentTx = await TrezorConnect.pushTransaction({
             tx,
             coin,
