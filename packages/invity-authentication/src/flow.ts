@@ -12,7 +12,7 @@ const sendMessageToParent = data => {
             name: 'invity-authentication',
             ...data,
         }),
-        '*', // TODO: only allowed origins
+        '*',
     );
 };
 
@@ -62,18 +62,24 @@ const getUrls = (flowType: string) => {
     const urlSearchParameters = new URLSearchParams(window.location.search);
     const returnToUrl = urlSearchParameters.get('return_to');
     const afterVerificationReturnToUrl = urlSearchParameters.get('after_verification_return_to');
+    // TODO: check second click on verification link in email
 
     const authServerUrl = window.location.hash.replace('#', '');
     let flowUrl = `${authServerUrl}/self-service/${flowType}/flows`;
     let redirectUrl = `/account/${flowType}`;
     switch (flowType) {
+        case 'verification':
+            redirectUrl = '/accounts/invity/registration'; // Trezor Suite relative URL hardcoded
+            break;
         case 'settings':
             redirectUrl = '/accounts/invity/settings'; // Trezor Suite relative URL hardcoded
+            break;
         case 'recovery':
             redirectUrl = redirectUrl.replace('recovery', 'reset');
             break;
         case 'error':
             flowUrl = `${authServerUrl}/self-service/errors`;
+        // TODO: try remove identity schema json
         default:
             break;
     }
@@ -110,7 +116,6 @@ const die = message => {
 const getFlowId = (urls, flowType) => {
     const urlParams = new URLSearchParams(window.location.search);
     const flowId = urlParams.get('flow');
-
     if (flowType === 'error') {
         sendMessageToParent({ action: 'resize', data: document.body.scrollHeight });
         return urlParams.get('error');
@@ -175,7 +180,7 @@ const prefillEmail = (email = '', flowType) => {
 const setLogoutOnSubmit = () => {
     const form = document.getElementById('form');
     form.onsubmit = () => {
-        sendMessageToParent({ redirectTo: 'logout' }); // Log out the user, then redirect to /account/login
+        sendMessageToParent({ action: 'logout' }); // Log out the user, then redirect to /account/login
         return false; // do not submit the form
     };
 };
@@ -201,7 +206,6 @@ const reloadAfterTimeout = (urls, flowType) => {
     }
     if (expirationTimeMinutes) {
         setTimeout(() => {
-            console.log('reloadAfterTimeout');
             window.location.replace(urls.browserUrl);
         }, expirationTimeMinutes * 60 * 1000);
     }
@@ -211,16 +215,16 @@ const checkPrivilegedSession = (authenticatedAt: number, flowType) => {
     if (flowType !== 'settings') {
         return;
     }
-    const maxPrivilegedSessionTime = 5; // This value corresponds to flows.settings.privileged_session_max_age from Kratos config
+    const maxPrivilegedSessionTimeMinutes = 5; // This value corresponds to flows.settings.privileged_session_max_age from Kratos config
     const timeDiff = new Date().valueOf() - authenticatedAt;
     const minutesSinceAuthentication = Math.floor(timeDiff / 1000 / 60);
-    if (minutesSinceAuthentication > maxPrivilegedSessionTime) {
+    if (minutesSinceAuthentication > maxPrivilegedSessionTimeMinutes) {
         setLogoutOnSubmit(); // Session already expired, make the submit button log out the user
     } else {
         // After the privileged session expires, make the submit button log out the user
         setTimeout(() => {
             setLogoutOnSubmit();
-        }, maxPrivilegedSessionTime * 60 * 1000 - timeDiff);
+        }, maxPrivilegedSessionTimeMinutes * 60 * 1000 - timeDiff);
     }
 };
 
@@ -242,16 +246,17 @@ const checkWhoami = async (flowType, urls) => {
                 ['registration', 'login'].includes(flowType) ||
                 (flowType === 'verification' && verifiableAddress.verified)
             ) {
-                sendMessageToParent({ state: 'login-successful' });
+                sendMessageToParent({ action: 'login-successful' });
+                exit();
             } else if (flowType === 'recovery') {
                 if (verifiableAddress.verified) {
-                    sendMessageToParent({ redirectTo: 'settings' });
+                    sendMessageToParent({ action: 'settings' });
                 } else {
-                    sendMessageToParent({ redirectTo: 'verification' });
+                    sendMessageToParent({ action: 'verification' });
                 }
                 exit();
             }
-            // prefillEmail(verifiableAddress.value, flowType); // pre-fill email from user info (if needed)
+            prefillEmail(verifiableAddress.value, flowType); // pre-fill email from user info (if needed)
         }
     } catch (error) {
         if (error !== 'exit') {
@@ -263,6 +268,7 @@ const checkWhoami = async (flowType, urls) => {
 const parseFlowAttributes = (flowData, flowType) => {
     if (flowData.errors) {
         const message = 'An unexpected error has occured.';
+        // TODO: correct action and message
         sendMessageToParent({ action: { type: 'showMessage', variant: 'danger', text: message } });
         console.error(flowData.errors[0].message);
         exit();
@@ -297,10 +303,6 @@ const parseFlowAttributes = (flowData, flowType) => {
         } else if (node.attributes.name === 'method' && node.attributes.value) {
             const submitButton = document.getElementById('submit') as HTMLButtonElement;
             submitButton.value = node.attributes.value;
-            if (flowType === 'settings' && node.attributes.value === 'password') {
-                // Settings flow has multiple submit buttons (for email & password), we need just the password submit
-                submitButton.value = node.attributes.value;
-            }
         }
         // Attribute-specific messages
         if (node.messages.length > 0) {
@@ -310,6 +312,7 @@ const parseFlowAttributes = (flowData, flowType) => {
                 // data breach message has the same ID :(
                 if (message.text.includes('data breaches')) {
                     // The password can not be used because the password has been found in data breaches and must no longer be used.
+                    // TODO
                     // message.text = translate(
                     //     translations,
                     //     'accounts.insecure_password',
@@ -353,15 +356,9 @@ const parseFlowAttributes = (flowData, flowType) => {
 
             case 1060002:
                 // Password recovery email sent.
-                /**
-                 * TODO: Remove window.top.location or resolve error in electron for Suite Desktop:
-                 * Blocked a frame with origin "http://localhost:21335" from accessing a cross-origin frame.
-                 */
-                // if (window.top.location.pathname !== '/account/reset-sent') {
                 disableForm();
                 sendMessageToParent({ action: 'recovery-sent' }); // "recovery mail sent" page
                 exit();
-                // }
                 break;
 
             case 1050001:
@@ -377,7 +374,7 @@ const parseFlowAttributes = (flowData, flowType) => {
 
             case 4060005:
                 // The flow has expired - reload the page
-                sendMessageToParent({ action: { type: 'reload' } });
+                sendMessageToParent({ action: 'reload' });
                 exit();
                 break;
 
@@ -391,8 +388,8 @@ const parseFlowAttributes = (flowData, flowType) => {
                 break;
         }
         showMessage(message.type, message.text);
-        sendMessageToParent({ action: 'resize', data: document.body.scrollHeight });
     }
+    sendMessageToParent({ action: 'resize', data: document.body.scrollHeight });
 };
 
 const checkIsIframe = urls => {
@@ -421,7 +418,7 @@ const checkFlowType = flowType => {
     if (flowType === 'registration' && urlParams.get('state') === 'success') {
         // User successfully registered - redirect to verification
         disableForm();
-        sendMessageToParent({ redirectTo: 'verification' });
+        sendMessageToParent({ action: 'verification' });
         exit();
     } else if (flowType === 'settings') {
         const form = document.getElementById('form');
@@ -437,17 +434,6 @@ const checkFlowType = flowType => {
             return true;
         };
         document.getElementById('verification').remove();
-        /**
-         * TODO: Remove window.top.location or resolve error in electron for Suite Desktop:
-         * Blocked a frame with origin "http://localhost:21335" from accessing a cross-origin frame.
-         */
-        // if (window.top.location.pathname === '/account/reset-sent') {
-        //     // Remove verification re-send text & submit link-button
-        //     document.getElementById('submit').remove();
-        //     document.getElementById('submit_link').setAttribute('id', 'submit');
-        // } else {
-        //     document.getElementById('verification').remove(); // Remove the "nothing arrived?" div
-        // }
     }
     const form = document.getElementById('form');
     form.onsubmit = () => {
@@ -558,8 +544,3 @@ const runFlow = async flowType => {
 window.addEventListener('resize', () =>
     sendMessageToParent({ action: 'resize', data: document.body.scrollHeight }),
 );
-
-// TODO: Decided whether we need to notify parent window that this window has loaded.
-// window.addEventListener('DOMContentLoaded', _ => {
-//     sendMessageToParent({ action: 'loaded' });
-// });
