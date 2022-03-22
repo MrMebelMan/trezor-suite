@@ -104,6 +104,10 @@ const components: { [key: string]: React.LazyExoticComponent<any> } = {
     'wallet-invity-account-verified': lazy(
         () => import(/* webpackChunkName: "coinmarket" */ '@wallet-views/invity/account-verified'),
     ),
+    'wallet-invity-settings-successful': lazy(
+        () =>
+            import(/* webpackChunkName: "coinmarket" */ '@wallet-views/invity/settings-successful'),
+    ),
     'wallet-invity-user-info': lazy(
         () => import(/* webpackChunkName: "coinmarket" */ '@wallet-views/invity/user-info'),
     ),

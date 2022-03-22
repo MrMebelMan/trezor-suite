@@ -77,6 +77,9 @@ const pageAssetCollection: PageAssetCollection = {
         ],
         css,
     },
+    'settings-success': {
+        js: [getScriptFilePath('settings-success.js')],
+    },
 };
 
 const ScriptPlaceholder = /<!-- ScriptPlaceholder -->/g;

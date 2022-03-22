@@ -41,6 +41,7 @@ import WalletInvityPhoneNumberVerification from '@wallet-views/invity/phone-numb
 import WalletInvityKYCStart from '@wallet-views/invity/kyc-start';
 import WalletInvityKYCFailed from '@wallet-views/invity/kyc-failed';
 import WalletInvityAML from '@wallet-views/invity/aml';
+import WalletInvitySettingsSuccessful from '@wallet-views/invity/settings-successful';
 import WalletCoinmarketRedirect from '@wallet-views/coinmarket/redirect';
 
 import SettingsGeneral from '@settings-views/general/SettingsGeneral';
@@ -87,6 +88,7 @@ const components: { [key: string]: React.ComponentType<any> } = {
     'wallet-invity-kyc-start': WalletInvityKYCStart,
     'wallet-invity-kyc-failed': WalletInvityKYCFailed,
     'wallet-invity-aml': WalletInvityAML,
+    'wallet-invity-settings-successful': WalletInvitySettingsSuccessful,
     'wallet-coinmarket-redirect': WalletCoinmarketRedirect,
 
     'settings-index': SettingsGeneral,

@@ -35,5 +35,8 @@ export const useInvityNavigation = (account: Account) => {
         ),
         navigateToInvityKYCStart: useNavigateToRouteName('wallet-invity-kyc-start'),
         navigateToInvityAML: useNavigateToRouteName('wallet-invity-aml'),
+        navigateToInvitySettingsSuccessful: useNavigateToRouteName(
+            'wallet-invity-settings-successful',
+        ),
     };
 };

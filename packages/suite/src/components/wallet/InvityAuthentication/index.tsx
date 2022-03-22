@@ -33,8 +33,11 @@ interface IframeMessage {
         | 'resize'
         | 'registration-successful'
         | 'login-successful'
+        | 'logout'
         | 'logout-successful'
-        | 'recovery-sent';
+        | 'recovery-sent'
+        | 'settings-successful'
+        | 'verification';
     data?: any;
 }
 
@@ -78,7 +81,8 @@ const InvityAuthentication: React.FC<InvityAuthenticationProps> = ({
         loadSavingsTrade: coinmarketSavingsActions.loadSavingsTrade,
         addToast: notificationActions.addToast,
     });
-    const { navigateToInvityRegistrationSuccessful } = useInvityNavigation(account);
+    const { navigateToInvityRegistrationSuccessful, navigateToInvitySettingsSuccessful } =
+        useInvityNavigation(account);
     const { navigateToSavings } = useCoinmarketNavigation(account);
 
     useEffectOnce(() => {
@@ -121,6 +125,9 @@ const InvityAuthentication: React.FC<InvityAuthenticationProps> = ({
                         clearInvityAuthentication();
                     }
                     break;
+                case 'settings-successful':
+                    navigateToInvitySettingsSuccessful();
+                    break;
                 // eslint-disable-next-line no-fallthrough
                 default:
             }
@@ -136,6 +143,7 @@ const InvityAuthentication: React.FC<InvityAuthenticationProps> = ({
         redirectUnauthorizedUserToLogin,
         clearInvityAuthentication,
         selectedProvider,
+        navigateToInvitySettingsSuccessful,
     ]);
 
     useEffect(() => {

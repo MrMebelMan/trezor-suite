@@ -275,6 +275,12 @@ const routes = [
         params: walletParams,
     },
     {
+        name: 'wallet-invity-settings-successful',
+        pattern: '/accounts/invity/settings-successful',
+        app: 'wallet',
+        params: walletParams,
+    },
+    {
         name: 'wallet-invity-user-info',
         pattern: '/accounts/invity/user-info',
         app: 'wallet',

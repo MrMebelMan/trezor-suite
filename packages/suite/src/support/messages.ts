@@ -918,6 +918,18 @@ export default defineMessages({
         defaultMessage: 'Logged out of Invity.',
         id: 'TR_INVITY_LOGGED_OUT_SUCCESSFUL_NOTIFICATION',
     },
+    TR_INVITY_SETTINGS_SUCCESSFUL_HEADER: {
+        defaultMessage: 'The password was successfully changed.',
+        id: 'TR_INVITY_SETTINGS_SUCCESSFUL_HEADER',
+    },
+    TR_INVITY_SETTINGS_SUCCESSFUL_DESCRIPTION: {
+        defaultMessage: 'The password was successfully changed.',
+        id: 'TR_INVITY_SETTINGS_SUCCESSFUL_DESCRIPTION',
+    },
+    TR_INVITY_SETTINGS_SUCCESSFUL_BUTTON_LABEL: {
+        defaultMessage: 'Go to Log in',
+        id: 'TR_INVITY_SETTINGS_SUCCESSFUL_BUTTON_LABEL',
+    },
     TR_INVITY_KYC_SUCCESS_NOTIFICATION: {
         defaultMessage: 'KYC successfully passed.',
         id: 'TR_INVITY_KYC_SUCCESS_NOTIFICATION',
