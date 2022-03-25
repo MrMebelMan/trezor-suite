@@ -140,7 +140,7 @@ export interface SavingsProviderInfo {
     tradedCoins: string[];
 
     /** Fiat currencies (3-letter ISO codes) with which can the savings be set up. */
-    tradedFiatCurrencies?: string[];
+    tradedFiatCurrencies: string[];
 
     /** Supported countries (2-letter ISO codes) of where provider offers the savings. */
     supportedCountries: string[];
@@ -983,13 +983,13 @@ class InvityAPI {
     };
 
     doSavingsTrade = async (
-        trade: SavingsTradeRequest,
+        requestBody: SavingsTradeRequest,
     ): Promise<SavingsTradeResponse | undefined> => {
         this.setProtectedAPI(true);
         try {
             const response: SavingsTradeResponse = await this.requestApiServer(
-                this.SAVINGS_TRADE,
-                trade,
+                `${this.SAVINGS_TRADE}/${requestBody.trade.exchange}`,
+                requestBody,
                 'POST',
             );
             return response;

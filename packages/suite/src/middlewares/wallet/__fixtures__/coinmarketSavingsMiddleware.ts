@@ -43,6 +43,7 @@ export const SELECTED_PROVIDER: SavingsProviderInfo = {
     isActive: true,
     tradedCoins: [],
     supportedCountries: ['CZ'],
+    tradedFiatCurrencies: ['BTC'],
     identityDocuments: [],
     privacyPolicyUrl: '',
     setupPaymentAmounts: [],
