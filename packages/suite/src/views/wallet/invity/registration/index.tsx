@@ -5,6 +5,7 @@ import { Translation } from '@suite-components';
 import { useInvityNavigation } from '@wallet-hooks/useInvityNavigation';
 import { useEffectOnce } from 'react-use';
 import { Loader } from '@trezor/components';
+import invityAPI from '@suite-services/invityAPI';
 
 const Wrapper = styled.div`
     display: flex;
@@ -93,7 +94,7 @@ const CoinmarketSavingsRegistration = ({
     const [isLoading, setIsLoading] = useState(false);
 
     const fetchFlowData = async () => {
-        const flowUrl = 'http://localhost:4633/self-service/registration/browser';
+        const flowUrl = `${invityAPI.getAuthServerUrl()}/self-service/registration/browser`;
         setIsLoading(true);
         const response = await fetch(flowUrl, {
             headers: {

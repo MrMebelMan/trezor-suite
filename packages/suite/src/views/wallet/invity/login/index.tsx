@@ -9,6 +9,7 @@ import { getRoute } from '@suite-utils/router';
 import { SUITE_URL } from '@suite-constants/urls';
 import { useInvityLogin } from '@wallet-hooks/useInvityLogin';
 import { useEffectOnce } from 'react-use';
+import invityAPI from '@suite-services/invityAPI';
 
 const Wrapper = styled.div`
     display: flex;
@@ -125,7 +126,7 @@ const CoinmarketSavingsLogin = (props: InvityLayoutProps) => {
 
     const initializeFlow = async () => {
         setIsLoading(true);
-        const flowUrl = 'http://localhost:4633/self-service/login/browser';
+        const flowUrl = `${invityAPI.getAuthServerUrl()}/self-service/login/browser`;
         const response = await fetch(flowUrl, {
             headers: {
                 Accept: 'application/json',
@@ -181,7 +182,7 @@ const CoinmarketSavingsLogin = (props: InvityLayoutProps) => {
         if (json.redirect_browser_to) {
             // Correct email entered - request additional flow data to initialize webauthn
             const flowId = json.redirect_browser_to.split('=')[1];
-            const flowUrl = `http://localhost:4633/self-service/login/flows?id=${flowId}`;
+            const flowUrl = `${invityAPI.getAuthServerUrl()}/self-service/login/flows?id=${flowId}`;
             await fetchFlowData(flowUrl, 'GET');
         } else if (json.error) {
             setError(json.error.message);
