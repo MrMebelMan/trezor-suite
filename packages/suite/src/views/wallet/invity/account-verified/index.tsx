@@ -31,6 +31,7 @@ const Description = styled.div`
 
 const AccountVerified = ({ selectedAccount }: WithInvityLayoutProps) => {
     const { navigateToInvityLogin } = useInvityNavigation(selectedAccount.account);
+    // TODO: parse ?flow=<flowId> parameter and process it
     return (
         <Wrapper>
             <SpecularImg src={resolveStaticPath('images/suite/3d/folder.png')} alt="" />
