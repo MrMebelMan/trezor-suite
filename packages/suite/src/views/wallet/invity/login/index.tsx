@@ -258,10 +258,10 @@ const CoinmarketSavingsLogin = (props: InvityLayoutProps) => {
                         : '',
                 },
             });
+            await fetchFlowData(formAction, 'POST', webauthnLoginData);
         } catch (err) {
             setError(err.toString());
         }
-        await fetchFlowData(formAction, 'POST', webauthnLoginData);
     };
 
     const webauthnTrigger = () => {

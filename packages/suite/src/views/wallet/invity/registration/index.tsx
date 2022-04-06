@@ -190,10 +190,10 @@ const CoinmarketSavingsRegistration = ({
                     clientDataJSON: oryWebAuthnBufferEncode(credential.response.clientDataJSON),
                 },
             });
+            await submitForm(webauthnRegisterData);
         } catch (err) {
             setError(err.toString());
         }
-        await submitForm(webauthnRegisterData);
     };
 
     const webauthnTrigger = () => {
