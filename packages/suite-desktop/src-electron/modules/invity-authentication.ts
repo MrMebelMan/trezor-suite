@@ -22,13 +22,25 @@ const init = ({ interceptor }: Dependencies) => {
     const invityApiServerUrls = invityAPI.getAllApiServerUrls();
 
     interceptor.onBeforeSendHeadersAsync(async ({ requestHeaders, url }) => {
+        // console.log('onBeforeSendHeadersAsync');
+        // console.log(requestHeaders);
+        // console.log(url);
         if (
             [...invityAuthenticationServerUrls, ...invityApiServerUrls, httpServerUrl].some(
                 allowedUrl => url.startsWith(allowedUrl),
             )
         ) {
             logger.debug('invity-authentication', 'Setting origin to current HTTP request.');
+
+            // Makes no difference
+            // if (url.includes('/self-service/')) {
+            //     // TODO: what about prod kratos?
+            //     requestHeaders.Origin = 'http://localhost:8000';
+            // } else {
             requestHeaders.Origin = httpServerUrl;
+            // }
+            // console.log(`Origin: ${requestHeaders.Origin}`);
+            // console.log(requestHeaders);
 
             logger.debug('invity-authentication', 'Getting cookie.');
             const cookies = await session.defaultSession.cookies.get({});
